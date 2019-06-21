@@ -50,13 +50,15 @@ namespace Snake
             }
         }
 
-        private const int grideSize = 16;
-        private const int gridWidth = 64;
-        private const int gridHeight = 50;
-        private const int width = grideSize * gridWidth;
-        private const int height = grideSize * gridHeight;
+        private const int gridSize = 16;
+        private const int gridWidth = 70;
+        private const int gridHeight = 45;
+        private const int width = gridSize * gridWidth;
+        private const int height = gridSize * gridHeight;
+        private readonly Color bgColor = new Color(0, 100, 200);
+        private readonly Color textColor = Color.Yellow;
 
-        private TimeSpan moveDelay = TimeSpan.FromSeconds(0.15);
+        private TimeSpan moveDelay = TimeSpan.FromSeconds(0.08);
         private TimeSpan moveTimer = TimeSpan.FromSeconds(0);
 
         private GraphicsDeviceManager graphics;
@@ -191,15 +193,15 @@ namespace Snake
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.DarkSlateBlue);
+            GraphicsDevice.Clear(bgColor);
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             switch (state)
             {
                 case GameStates.StartScreen:
-                    spriteBatch.DrawString(font, "Snake", new Vector2(100, 100), Color.White);
-                    spriteBatch.DrawString(font, "Press Space to start.", new Vector2(100, 150), Color.White);
+                    spriteBatch.DrawString(font, "Snake", new Vector2(100, 100), textColor);
+                    spriteBatch.DrawString(font, "Press Space to start.", new Vector2(100, 150), textColor);
                     break;
 
                 case GameStates.Play:
@@ -208,10 +210,12 @@ namespace Snake
                     break;
 
                 case GameStates.EndScreen:
-                    spriteBatch.DrawString(font, "Game Over.", new Vector2(100, 100), Color.White);
+                    DrawSnake(p1Snake, p1Texture);
+                    DrawSnake(p2Snake, p2Texture);
+                    spriteBatch.DrawString(font, "Game Over.", new Vector2(100, 100), textColor);
                     string msg = (p1Crashed ? "Player 1 crashed. " : "") + (p2Crashed ? "Player 2 crashed." : "");
-                    spriteBatch.DrawString(font, msg, new Vector2(100, 150), Color.White);
-                    spriteBatch.DrawString(font, "Do you want to play again (Y/N)?", new Vector2(100, 200), Color.White);
+                    spriteBatch.DrawString(font, msg, new Vector2(100, 150), textColor);
+                    spriteBatch.DrawString(font, "Do you want to play again (Y/N)?", new Vector2(100, 200), textColor);
                     break;
             }
             spriteBatch.End();
@@ -276,7 +280,7 @@ namespace Snake
 
         private bool CheckBorderCrash(GridLoc pos)
         {
-            return pos.row <= 0 || pos.row >= height || pos.col <= 0 || pos.col >= width;
+            return pos.row < 0 || pos.row >= gridHeight || pos.col < 0 || pos.col >= gridWidth;
         }
 
 
@@ -303,7 +307,7 @@ namespace Snake
         {
             foreach (var pos in snake)
             {
-                var loc = new Vector2(pos.col * grideSize, pos.row * grideSize);
+                var loc = new Vector2(pos.col * gridSize, pos.row * gridSize);
                 spriteBatch.Draw(cell, loc, Color.White);
             }
         }
